@@ -2,131 +2,150 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carga de Vinilos con Tasas</title>
+    <title>Vinilos Widget - Carga Manual</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f0f2f5; }
-        h2 { color: #1a2a6c; border-bottom: 2px solid #1a2a6c; padding-bottom: 10px; }
-        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 95%; margin: auto; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; min-width: 1200px; }
-        th, td { border: 1px solid #e0e0e0; padding: 10px; text-align: left; font-size: 13px; }
-        th { background-color: #1a2a6c; color: white; text-transform: uppercase; letter-spacing: 0.5px; }
-        input { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        input:focus { border-color: #1a2a6c; outline: none; background-color: #f9f9ff; }
-        .btns { margin-top: 25px; display: flex; justify-content: space-between; }
-        button { padding: 12px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.3s; }
-        .add-btn { background-color: #27ae60; color: white; }
-        .add-btn:hover { background-color: #219150; }
-        .download-btn { background-color: #2980b9; color: white; }
-        .download-btn:hover { background-color: #1f6391; }
-        .remove-btn { background-color: #e74c3c; color: white; padding: 5px 8px; font-size: 11px; }
-        .remove-btn:hover { background-color: #c0392b; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 10px; background: transparent; color: #37352f; }
+        .container { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+        
+        /* Bloques de Totales Manuales */
+        .summary-cards { display: flex; gap: 15px; margin-bottom: 20px; }
+        .card { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #eee; background: #fbfbfa; border-left: 4px solid #0665d0; }
+        .card label { display: block; font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 4px; }
+        .card input { border: 1px solid #ddd; background: white; font-size: 16px; font-weight: bold; color: #37352f; width: 100%; padding: 5px; border-radius: 4px; box-sizing: border-box; }
+
+        .scroll-container { overflow-x: auto; margin-bottom: 15px; border-radius: 4px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; min-width: 1200px; font-size: 12px; }
+        th, td { border: 1px solid #efefef; padding: 8px; text-align: left; }
+        th { background-color: #f7f7f7; color: #666; font-weight: 600; }
+        
+        input { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        input:focus { border-color: #0665d0; outline: none; background-color: #f9f9ff; }
+
+        .btn-group { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
+        button { flex: 1; padding: 12px; cursor: pointer; border: none; border-radius: 6px; font-weight: 600; font-size: 13px; transition: 0.2s; }
+        .add-btn { background-color: #23835c; color: white; }
+        .add-btn:hover { background-color: #1e6d4d; }
+        .dl-btn { background-color: #0665d0; color: white; }
+        .dl-btn:hover { background-color: #0555b0; }
+        .remove-btn { background-color: #eb5757; color: white; border-radius: 4px; padding: 4px 8px; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Registro Maestro de Vinilos</h2>
-    <table id="vinilosTable">
-        <thead>
-            <tr>
-                <th>Títulos</th>
-                <th>Artistas</th>
-                <th>Fecha de Pago</th>
-                <th>Código</th>
-                <th>Lote</th>
-                <th>Calidad</th>
-                <th>Origen</th>
-                <th>Género</th>
-                <th>Costo USD (VZLA)</th>
-                <th>Costo USDT (ARG)</th>
-                <th>Tasa USD (VZLA)</th>
-                <th>Tasa USDT</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input type="text" class="titulo" placeholder="Nombre disco"></td>
-                <td><input type="text" class="artista"></td>
-                <td><input type="date" class="fecha"></td>
-                <td><input type="text" class="codigo"></td>
-                <td><input type="text" class="lote"></td>
-                <td><input type="text" class="calidad"></td>
-                <td><input type="text" class="pais"></td>
-                <td><input type="text" class="genero"></td>
-                <td><input type="number" step="0.01" class="costoVzla"></td>
-                <td><input type="number" step="0.01" class="costoArg"></td>
-                <td><input type="number" step="0.01" class="tasaVzla" placeholder="BS/USD"></td>
-                <td><input type="number" step="0.01" class="tasaUsdt" placeholder="ARS/USDT"></td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="summary-cards">
+        <div class="card">
+            <label>Gasto General USD (Manual)</label>
+            <input type="number" id="manualUSD" step="0.01" placeholder="0.00">
+        </div>
+        <div class="card">
+            <label>Gasto General USDT (Manual)</label>
+            <input type="number" id="manualUSDT" step="0.01" placeholder="0.00">
+        </div>
+    </div>
 
-    <div class="btns">
-        <button class="add-btn" onclick="addRow()">+ Agregar Fila</button>
-        <button class="download-btn" onclick="exportToExcel()">Generar Excel Detallado</button>
+    <div class="scroll-container">
+        <table id="vinilosTable">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Artista</th>
+                    <th>Fecha</th>
+                    <th>Código</th>
+                    <th>Lote</th>
+                    <th>Calidad</th>
+                    <th>Origen</th>
+                    <th>Género</th>
+                    <th>$ VZLA</th>
+                    <th>$ ARG (USDT)</th>
+                    <th>Precio ARS</th>
+                    <th>Tasa VZLA</th>
+                    <th>Tasa USDT</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="dato-row">
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="date"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="number" step="0.01"></td>
+                    <td><input type="number" step="0.01"></td>
+                    <td><input type="number" step="0.01"></td>
+                    <td><input type="number" step="0.01"></td>
+                    <td><input type="number" step="0.01"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="btn-group">
+        <button class="add-btn" onclick="addRow()">+ Agregar Vinilo</button>
+        <button class="dl-btn" onclick="exportToExcel()">Descargar Excel</button>
     </div>
 </div>
 
 <script>
     function addRow() {
-        const table = document.getElementById("vinilosTable").getElementsByTagName('tbody')[0];
-        const newRow = table.insertRow();
-        newRow.innerHTML = `
-            <td><input type="text" class="titulo"></td>
-            <td><input type="text" class="artista"></td>
-            <td><input type="date" class="fecha"></td>
-            <td><input type="text" class="codigo"></td>
-            <td><input type="text" class="lote"></td>
-            <td><input type="text" class="calidad"></td>
-            <td><input type="text" class="pais"></td>
-            <td><input type="text" class="genero"></td>
-            <td><input type="number" step="0.01" class="costoVzla"></td>
-            <td><input type="number" step="0.01" class="costoArg"></td>
-            <td><input type="number" step="0.01" class="tasaVzla"></td>
-            <td><input type="number" step="0.01" class="tasaUsdt"></td>
-            <td><button class="remove-btn" onclick="removeRow(this)">Eliminar</button></td>
+        const table = document.querySelector("#vinilosTable tbody");
+        const row = table.insertRow();
+        row.className = "dato-row";
+        row.innerHTML = `
+            <td><input type="text"></td><td><input type="text"></td>
+            <td><input type="date"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td>
+            <td><input type="number" step="0.01"></td>
+            <td><input type="number" step="0.01"></td>
+            <td><input type="number" step="0.01"></td>
+            <td><input type="number" step="0.01"></td>
+            <td><input type="number" step="0.01"></td>
+            <td><button class="remove-btn" onclick="this.parentElement.parentElement.remove()">×</button></td>
         `;
     }
 
-    function removeRow(btn) {
-        const row = btn.parentNode.parentNode;
-        row.parentNode.removeChild(row);
-    }
-
     function exportToExcel() {
-        const rows = document.querySelectorAll("#vinilosTable tbody tr");
         const data = [];
         
-        // Encabezados exactos de tu CSV
+        // Encabezados
         const headers = [
-            "Titulos(Nombres de Disco)", "Artistas", "Fecha de Pago", "Codigo vinilo", 
+            "Titulos", "Artistas", "Fecha de Pago", "Codigo vinilo", 
             "Nro Lote", "Calidad", "Pais Origen", "Genero", 
-            "COSTO en USDVNZLA", "COSTO USDT (ARG)", "TASA DE CAMBIO USD VNZLA", "Tasa de cambio USDT"
+            "COSTO en USDVNZLA", "COSTO USDT (ARG)", "Precio ARS", 
+            "TASA DE CAMBIO USD VNZLA", "Tasa de cambio USDT", 
+            "Gasto en USD", "Gasto USDT"
         ];
         data.push(headers);
 
-        rows.forEach(row => {
+        const mUSD = document.getElementById('manualUSD').value;
+        const mUSDT = document.getElementById('manualUSDT').value;
+
+        const dataRows = document.querySelectorAll(".dato-row");
+        dataRows.forEach((row, index) => {
             const inputs = row.querySelectorAll("input");
             const rowData = Array.from(inputs).map(input => input.value);
+            
+            // Adjuntar los valores de los bloques manuales superiores
+            if (index === 0) {
+                rowData.push(mUSD, mUSDT);
+            } else {
+                rowData.push("", ""); 
+            }
             data.push(rowData);
         });
 
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(data);
-        
-        // Ajuste automático de ancho de columnas básico
-        const wscols = headers.map(() => ({ wch: 20 }));
-        ws['!cols'] = wscols;
-
         XLSX.utils.book_append_sheet(wb, ws, "Registros");
-        XLSX.writeFile(wb, "Control_Vinilos_Full.xlsx");
+        XLSX.writeFile(wb, "Control_Vinilos_Manual.xlsx");
     }
 </script>
-
 </body>
 </html>
